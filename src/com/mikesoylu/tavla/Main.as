@@ -1,5 +1,5 @@
 package com.mikesoylu.tavla {
-	import com.mikesoylu.fortia.*;
+	import com.mikesoylu.fortia.fGame;
 	import flash.desktop.*;
 	import flash.events.*;
 	import flash.display.*;
@@ -11,16 +11,12 @@ package com.mikesoylu.tavla {
 	public class Main extends fGame {
 		
 		public function Main():void {
-			super(MenuScene);
-			
-			fLocalize.addDictionary({
-				playButton: "Play"
-			});
+			super(LoadingScene);
 			
 			// listen to deactivation
 			stage.addEventListener(Event.DEACTIVATE, deactivate);
 			
-			// touch or gesture?
+			// use touch as input(no gestures)
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 		}
 		

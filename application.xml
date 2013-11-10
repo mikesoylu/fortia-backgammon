@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?> 
-<application xmlns="http://ns.adobe.com/air/application/3.9">
+<application xmlns="http://ns.adobe.com/air/application/3.7">
 	
-	<id>air.com.mikesoylu.tavla.tavla</id>
+	<id>air.com.mikesoylu.tavla</id>
 	<versionNumber>0.1</versionNumber>
 	<supportedProfiles>mobileDevice</supportedProfiles>
 	<filename>tavla</filename>
 	
-	<name>tavla</name>
+	<name>Tavla</name>
 	<description></description>
 	<copyright></copyright>
 	
@@ -50,8 +50,8 @@
 		<content>tavla.swf</content>
 		<visible>true</visible>
 		<fullScreen>true</fullScreen>
-		<!--<autoOrients>false</autoOrients>-->
-		<!--<aspectRatio>landscape</aspectRatio>-->
+		<autoOrients>false</autoOrients>
+		<aspectRatio>landscape</aspectRatio>
 		<renderMode>direct</renderMode>
 		<!--<depthAndStencil>true</depthAndStencil>--> <!-- required for 3D -->
 	</initialWindow>
@@ -68,18 +68,4 @@
 		<image152x152>icons/icon_152.png</image152x152>
 		<!--<image512x512>icons/icon_512.png</image512x512>-->
 	</icon>
-	
-	<!-- 
-	AIR options:
-	http://livedocs.adobe.com/flex/3/html/File_formats_1.html#1043413
-	
-	AIR mobile options:
-	http://help.adobe.com/en_US/air/build/WSfffb011ac560372f-5d0f4f25128cc9cd0cb-7ffe.html
-	
-	iOS icons guidelines:
-	http://developer.apple.com/library/ios/#documentation/userexperience/conceptual/mobilehig/IconsImages/IconsImages.html
-	
-	Android manifest documentation:
-	http://developer.android.com/guide/topics/manifest/manifest-intro.html
-	-->
 </application>

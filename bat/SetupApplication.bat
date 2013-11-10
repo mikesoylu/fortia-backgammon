@@ -32,7 +32,7 @@ set APP_DIR=bin
 set FILE_OR_DIR=-C %APP_DIR% .
 
 :: Your application ID (must match <id> of Application descriptor)
-set APP_ID=air.com.mikesoylu.tavla.tavla
+set APP_ID=air.com.mikesoylu.tavla
 
 :: Output packages
 set DIST_PATH=dist
