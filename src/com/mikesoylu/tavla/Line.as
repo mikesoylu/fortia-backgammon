@@ -1,6 +1,10 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
 	import flash.geom.Vector3D;
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
+	import starling.core.Starling;
+	import starling.display.DisplayObjectContainer;
 	/**
 	 * @author bms
 	 */
@@ -35,10 +39,23 @@ package com.mikesoylu.tavla {
 			return null;
 		}
 		
+		public function hasSinglePiece():Boolean {
+			return 1 == pieces.length;
+		}
+		
 		public function push(p:Piece):void {
-			p.x = rootPosition.x;
-			p.y = rootPosition.y + (expandUpwards ? -1.0 : 1.0) *
+			// pull piece to front
+			var prn:DisplayObjectContainer = p.parent;
+			p.removeFromParent(false);
+			prn.addChild(p);
+			
+			// update position
+			var x:Number = rootPosition.x;
+			var y:Number = rootPosition.y + (expandUpwards ? -1.0 : 1.0) *
 				pieces.length * p.height * PIECE_PLACEMENT_FACTOR;
+			Starling.juggler.tween(p, 0.5, { transition:Transitions.EASE_IN_OUT, x:x, y:y } );
+			
+			// register
 			pieces.push(p);
 		}
 		

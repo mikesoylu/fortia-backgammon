@@ -13,9 +13,13 @@ package com.mikesoylu.tavla {
 		/** lines that contain pieces, clockwise order starting from bottom right */
 		private var lines:Vector.<Line>;
 		
-		/** these are just booleans because there are only two players */
-		private var isWhitesTurn:Boolean = true;
-		private var isPlayerWhite:Boolean = true;
+		/** this is where the collected pieces stay */
+		private var collectedLines:Object;
+		/** this is where the broken pieces stay */
+		private var brokenLines:Object;
+		
+		/** player turn */
+		private var currentPlayer:String = Piece.BLACK;
 		
 		/** selection related properties */
 		private var selectionMarker:Quad;
@@ -28,11 +32,21 @@ package com.mikesoylu.tavla {
 			var bg:Quad = new Quad(fGame.width, fGame.height, 0x111111);
 			addChild(bg);
 			
+			// marker
 			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x331111);
 			selectionMarker.pivotX = selectionMarker.width / 2;
+			selectionMarker.visible = false;
 			addChild(selectionMarker);
 			
-			// fill in the vec so we don't get a null ref.
+			// init the lines
+			brokenLines = new Object();
+			brokenLines[Piece.BLACK] = new Line( { x:0, y:0 }, true);
+			brokenLines[Piece.WHITE] = new Line( { x:0, y:0 }, false);
+			
+			collectedLines = new Object();
+			collectedLines[Piece.BLACK] = new Line( { x:0, y:0 }, true);
+			collectedLines[Piece.WHITE] = new Line( { x:0, y:0 }, false);
+			
 			lines = new Vector.<Line>();
 			for (var i:int = 0; i < 24; i++) {
 				var x:Number;
@@ -69,35 +83,67 @@ package com.mikesoylu.tavla {
 			addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
-		public override function update(dt:Number):void {
-			super.update(dt);
-		}
-		
 		private function onTouch(e:TouchEvent):void {
 			var touch:Touch = e.getTouch(this as DisplayObject);
 			if (null != touch) {
 				var loc:Point = touch.getLocation(this);
 				if (TouchPhase.BEGAN == touch.phase) {
-					// check if we're selecting or placing the piece
 					var line:Line = getLineAt(loc.x, loc.y);
-					if (null == line)
-						return;
+					var piece:Piece = line.peek();
+					
+					// check if we're selecting or placing the piece
 					if (null == selectedLine) {
+						if (null == piece || piece.type != currentPlayer)
+							return;
 						selectedLine = line;
 						selectionMarker.x = line.rootPosition.x;
+						selectionMarker.visible = true;
 					} else {
+						// check if we can move there
+						if (null != piece && piece.type != currentPlayer &&
+							!line.hasSinglePiece())
+							return;
+						
+						// check if we're breaking a piece with this move
+						if (null != piece  &&
+							(piece.type != currentPlayer && line.hasSinglePiece())) {
+							// breaking
+						}
 						line.push(selectedLine.pop());
 						selectedLine = null;
+						selectionMarker.visible = false;
 					}
 				}
 			}
 		}
 		
+		private function isPlayerCollecting(player:String):Boolean {
+			// you can't collect if you have a broken tile
+			if (null != brokenLines[player].peek())
+				return false;
+			
+			// check if the player has pieces outside (can be optimized but not called that often)
+			for (var i:int = 0; i < 24; i++) {
+				var piece:Piece = lines[i].peek();
+				if (null == piece || piece.type != player)
+					continue;
+				
+				if (Piece.BLACK == player && i < 23 - 6) {
+					return false;
+				} else if (Piece.WHITE == player && i > 5) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
 		/** used to get the right piece under the touch */
 		private function getLineAt(x:Number, y:Number):Line {
-			var ind:int = 0;
+			var ind:int;
 			// correct the position
 			x -= fAssetManager.getTexture("white.png").width / 2;
+			
 			// figure out which line we're on
 			if (y < fGame.height / 2) {
 				ind = 12 + Math.floor(x / (fGame.width / 13.0));
