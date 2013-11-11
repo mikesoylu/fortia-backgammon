@@ -6,13 +6,11 @@ package com.mikesoylu.tavla {
 	 * @author bms
 	 */
 	public class GameScene extends fScene {
+		/** the container object for the pices */
 		private var board:Board;
-		private var isWhitesTurn:Boolean = true;
-		private var dice:Dice;
 		
-		public function GameScene() {
-			super();
-		}
+		/** the dice visual */
+		private var dice:Dice;
 		
 		public override function init(e:Event):void {
 			super.init(e);

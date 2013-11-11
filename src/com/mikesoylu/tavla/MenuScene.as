@@ -9,10 +9,6 @@ package com.mikesoylu.tavla {
 	public class MenuScene extends fScene {
 		private var playButton:Button;
 		
-		public function MenuScene() {
-			super();
-		}
-		
 		public override function init(e:Event):void {
 			super.init(e);
 			playButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("playButton"));

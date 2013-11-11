@@ -2,7 +2,6 @@ package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.fGame;
 	import flash.desktop.*;
 	import flash.events.*;
-	import flash.display.*;
 	import flash.ui.*;
 	
 	/**

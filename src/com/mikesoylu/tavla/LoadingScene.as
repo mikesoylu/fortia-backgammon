@@ -1,5 +1,6 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
+	import com.mikesoylu.tavla.assets.*;
 	import starling.events.Event;
 	import starling.text.TextField;
 	

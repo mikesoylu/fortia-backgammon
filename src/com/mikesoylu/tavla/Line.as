@@ -5,9 +5,10 @@ package com.mikesoylu.tavla {
 	 * @author bms
 	 */
 	public class Line {
-		private var pieces:Vector.<Piece>;
 		/** the position of the first piece in the line */
-		private var rootPosition:Vector3D;
+		public var rootPosition:Vector3D;
+		
+		private var pieces:Vector.<Piece>;
 		/** the direction of piece placement */
 		private var expandUpwards:Boolean = true;
 		
@@ -37,7 +38,7 @@ package com.mikesoylu.tavla {
 		public function push(p:Piece):void {
 			p.x = rootPosition.x;
 			p.y = rootPosition.y + (expandUpwards ? -1.0 : 1.0) *
-				pieces.length * np.height * PIECE_PLACEMENT_FACTOR;
+				pieces.length * p.height * PIECE_PLACEMENT_FACTOR;
 			pieces.push(p);
 		}
 		
