@@ -107,6 +107,7 @@ package com.mikesoylu.tavla {
 				playerIndicator.y = fGame.height;
 				playerIndicator.scaleY = 1;
 			}
+			fGame.log(currentPlayer + "player's turn");
 		}
 		
 		private function onTouch(e:TouchEvent):void {

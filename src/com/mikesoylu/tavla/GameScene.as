@@ -24,9 +24,11 @@ package com.mikesoylu.tavla {
 			addChild(board);
 			
 			diceA = new Dice();
+			diceA.visible = false;
 			addChild(diceA);
 			
 			diceB = new Dice();
+			diceB.visible = false;
 			addChild(diceB);
 			
 			rollDiceButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("rollButton"));
@@ -36,6 +38,8 @@ package com.mikesoylu.tavla {
 			rollDiceButton.y = fGame.height / 2;
 			rollDiceButton.addEventListener(Event.TRIGGERED, function():void {
 				board.advanceState( [diceA.roll(), diceB.roll()]);
+				diceA.visible = true;
+				diceB.visible = true;
 			});
 			addChild(rollDiceButton);
 		}
