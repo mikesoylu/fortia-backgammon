@@ -12,6 +12,8 @@ package com.mikesoylu.tavla {
 		/** the position of the first piece in the line */
 		public var rootPosition:Vector3D;
 		
+		public var index:int;
+		
 		private var pieces:Vector.<Piece>;
 		/** the direction of piece placement */
 		private var expandUpwards:Boolean = true;
@@ -19,10 +21,12 @@ package com.mikesoylu.tavla {
 		private static const PIECE_PLACEMENT_FACTOR:Number = 0.5;
 		
 		/** this takes an object for the pos param because Object literals look good in code */
-		public function Line(pos:Object, expandUpwards:Boolean) {
+		public function Line(pos:Object, index:int, expandUpwards:Boolean) {
 			// fill in the instance properties
-			rootPosition = new Vector3D(pos.x, pos.y);
+			this.index = index;
 			this.expandUpwards = expandUpwards;
+			rootPosition = new Vector3D(pos.x, pos.y);
+			
 			// init the list
 			pieces = new Vector.<Piece>();
 		}

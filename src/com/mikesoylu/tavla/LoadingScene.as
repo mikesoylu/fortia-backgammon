@@ -16,7 +16,8 @@ package com.mikesoylu.tavla {
 			// add localization dictionaries
 			fLocalize.addDictionary({
 				playButton: "Play",
-				loading: "Loading..."
+				loading: "Loading...",
+				rollButton: "Roll Dice"
 			});
 			
 			// show a loading text
@@ -36,6 +37,7 @@ package com.mikesoylu.tavla {
 				fAssetManager.enqueue("game", SDAssets);
 			
 			fAssetManager.loadQueues(function():void {
+				// change scene on load
 				fGame.scene = new MenuScene();
 			});
 		}

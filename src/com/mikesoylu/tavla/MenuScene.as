@@ -21,13 +21,5 @@ package com.mikesoylu.tavla {
 			});
 			addChild(playButton);
 		}
-		
-		public override function update(dt:Number):void {
-			super.update(dt);
-		}
-		
-		public override function destroy():void {
-			super.destroy();
-		}
 	}
 }

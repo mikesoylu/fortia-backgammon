@@ -1,5 +1,6 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
+	import starling.display.Button;
 	import starling.events.*;
 	
 	/**
@@ -10,7 +11,11 @@ package com.mikesoylu.tavla {
 		private var board:Board;
 		
 		/** the dice visual */
-		private var dice:Dice;
+		private var diceA:Dice;
+		private var diceB:Dice;
+		
+		/** roll dice button */
+		private var rollDiceButton:Button;
 		
 		public override function init(e:Event):void {
 			super.init(e);
@@ -18,12 +23,21 @@ package com.mikesoylu.tavla {
 			board = new Board();
 			addChild(board);
 			
-			dice = new Dice();
-			addChild(dice);
-		}
-		
-		public override function update(dt:Number):void {
-			super.update(dt);
+			diceA = new Dice();
+			addChild(diceA);
+			
+			diceB = new Dice();
+			addChild(diceB);
+			
+			rollDiceButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("rollButton"));
+			rollDiceButton.pivotX = rollDiceButton.width / 2;
+			rollDiceButton.pivotY = rollDiceButton.height / 2;
+			rollDiceButton.x = fGame.width / 2;
+			rollDiceButton.y = fGame.height / 2;
+			rollDiceButton.addEventListener(Event.TRIGGERED, function():void {
+				board.advanceState( [diceA.roll(), diceB.roll()]);
+			});
+			addChild(rollDiceButton);
 		}
 		
 		public override function destroy():void {

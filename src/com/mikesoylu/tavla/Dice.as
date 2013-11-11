@@ -1,7 +1,7 @@
 package com.mikesoylu.tavla {
-	import com.mikesoylu.fortia.fAssetManager;
-	import com.mikesoylu.fortia.fImage;
-	import com.mikesoylu.fortia.fSprite;
+	import com.mikesoylu.fortia.*;
+	import starling.animation.Transitions;
+	import starling.core.Starling;
 	
 	/**
 	 * @author bms
@@ -16,26 +16,40 @@ package com.mikesoylu.tavla {
 			// fill in the dots but make them invisible
 			dots = new Vector.<fImage>();
 			for (var i:int = 0; i < 6; i++) {
-				var dot:fImage = new fImage(fAssetManager.getTexture("marker.png"));
+				var dot:fImage = new fImage(fAssetManager.getTexture("diceMarker.png"));
 				dot.visible = false;
 				dots.push(dot);
 				addChild(dot);
 			}
 		}
 		
-		/** this is used to update the graphics of the dice */
-		public function setDotsToNumber(num:int):void {
-			if (num < 1 || num > 6) {
-				throw new Error(num + " is not a valid die number");
-			}
+		/** roll the dice */
+		public function roll():int {
+			var rand:int = Math.floor(Math.random() * 6) + 1;
+			// double check the number
+			rand = fUtil.clamp(1, 6, rand);
+			
+			// update gfx
+			setDotsToNumber(rand);
+			
+			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT,
+					x:(Math.random() + 0.25) * fGame.width * 0.5, y:(Math.random() + 0.25) * fGame.height * 0.5 } );
+			return rand;
+		}
+		
+		/** this is used to update the graphics of the dice. num must be [1, 6] */
+		private function setDotsToNumber(num:int):void {
+			// fix the num
+			num--;
+			// set graphics accordingly
 			for (var i:int = 0; i < 6; i++) {
-				if (i + 1 > num) {
+				var dot:fImage = dots[i];
+				if (i > num) {
 					dot.visible = false;
 					continue;
 				}
-				var dot:fImage = dots[i];
 				dot.x = (i % 3 - 1) * fAssetManager.getTexture("dice.png").width * 0.2;
-				dot.y = (i / 3 - 0.5) * fAssetManager.getTexture("dice.png").width * 0.4;
+				dot.y = (Math.floor(i / 3.0) - 0.5) * fAssetManager.getTexture("dice.png").width * 0.4;
 				dot.visible = true;
 			}
 		}
