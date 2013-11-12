@@ -6,6 +6,7 @@ package com.mikesoylu.tavla {
 	 * @author bms
 	 */
 	public class Piece extends fImage {
+		/** Player sides. (We use static consts because AS3 doesn't have enums) */
 		public static const WHITE:String = "white";
 		public static const BLACK:String = "black";
 		

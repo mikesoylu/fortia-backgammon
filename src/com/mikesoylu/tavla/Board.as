@@ -17,7 +17,13 @@ package com.mikesoylu.tavla {
 		private var collectedLines:Object;
 		
 		/** player turn */
-		private var currentPlayer:String = Piece.BLACK;
+		private var _currentPlayer:String = Piece.BLACK;
+		public function get currentPlayer():String {
+			return _currentPlayer;
+		}
+		public function get nextPlayer():String {
+			return (_currentPlayer == Piece.BLACK)? Piece.WHITE : Piece.BLACK;
+		}
 		
 		/** selection related properties */
 		private var selectionMarker:Quad;
@@ -38,6 +44,7 @@ package com.mikesoylu.tavla {
 			playerIndicator.smoothing = "none";
 			playerIndicator.width = fGame.width;
 			playerIndicator.pivotY = playerIndicator.height;
+			playerIndicator.visible = false;
 			addChild(playerIndicator);
 			
 			// marker
@@ -98,16 +105,25 @@ package com.mikesoylu.tavla {
 			selectedLine = null;
 			selectionMarker.visible = false;
 			
-			if (Piece.BLACK == currentPlayer) {
-				currentPlayer = Piece.WHITE;
+			// show player indicator
+			if (!playerIndicator.visible) {
+				playerIndicator.visible = true;
+			}
+			if (Piece.BLACK == _currentPlayer) {
 				playerIndicator.y = 0;
 				playerIndicator.scaleY = -1;
 			} else {
-				currentPlayer = Piece.BLACK;
 				playerIndicator.y = fGame.height;
 				playerIndicator.scaleY = 1;
 			}
-			fGame.log(currentPlayer + "player's turn");
+			// advance turn
+			_currentPlayer = nextPlayer;
+			fGame.log(_currentPlayer + "player's turn");
+		}
+		
+		// this is called by game scene to collect the current selected piece
+		public function collect():void {
+			
 		}
 		
 		private function onTouch(e:TouchEvent):void {
@@ -120,18 +136,19 @@ package com.mikesoylu.tavla {
 					
 					// check if we're selecting or placing the piece
 					if (null == selectedLine) {
-						if (null == piece || piece.type != currentPlayer || availableMoves.length == 0)
+						if (null == piece || piece.type != _currentPlayer || availableMoves.length == 0) {
 							return;
+						}
 						selectedLine = line;
 						selectionMarker.x = line.rootPosition.x;
 						selectionMarker.visible = true;
 					} else {
 						// check if we can move there
-						if (null != piece && piece.type != currentPlayer)
+						if (null != piece && piece.type != _currentPlayer)
 							return;
 						var diff:int = line.index - selectedLine.index;
 						// check if we're going backwards
-						if (Piece.BLACK == currentPlayer) {
+						if (Piece.BLACK == _currentPlayer) {
 							if (diff < 0)
 								return;
 						} else if (diff > 0) {
@@ -150,6 +167,10 @@ package com.mikesoylu.tavla {
 						} else {
 							// we have a move so splice it out
 							availableMoves.splice(moveInd, 1);
+							if (availableMoves.length == 0) {
+								// inform game scene that we're out of moves
+								dispatchEvent(new GameEvent(GameEvent.TURN_ENDED));
+							}
 						}
 						
 						line.push(selectedLine.pop());

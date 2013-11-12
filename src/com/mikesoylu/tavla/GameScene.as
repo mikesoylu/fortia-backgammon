@@ -7,6 +7,12 @@ package com.mikesoylu.tavla {
 	 * @author bms
 	 */
 	public class GameScene extends fScene {
+		/** States in a player's turn. (We use static consts because AS3 doesn't have enums) */
+		private static const PLAY_STATE:String = "playState";
+		private static const SKIP_STATE:String = "skipState";
+		private static const ROLL_STATE:String = "rollState";
+		private var state:String = PLAY_STATE;
+		
 		/** the container object for the pices */
 		private var board:Board;
 		
@@ -14,13 +20,17 @@ package com.mikesoylu.tavla {
 		private var diceA:Dice;
 		private var diceB:Dice;
 		
-		/** roll dice button */
-		private var rollDiceButton:Button;
+		/** roll dice/skip/end button */
+		private var actionButton:Button;
+		/** collect pieces button (invisible at the beginning) */
+		private var collectButton:Button;
 		
 		public override function init(e:Event):void {
 			super.init(e);
 			
 			board = new Board();
+			board.addEventListener(GameEvent.TURN_ENDED, onTurnEnded);
+			board.addEventListener(GameEvent.TURN_ENDED, onTurnEnded);
 			addChild(board);
 			
 			diceA = new Dice();
@@ -31,17 +41,57 @@ package com.mikesoylu.tavla {
 			diceB.visible = false;
 			addChild(diceB);
 			
-			rollDiceButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("rollButton"));
-			rollDiceButton.pivotX = rollDiceButton.width / 2;
-			rollDiceButton.pivotY = rollDiceButton.height / 2;
-			rollDiceButton.x = fGame.width / 2;
-			rollDiceButton.y = fGame.height / 2;
-			rollDiceButton.addEventListener(Event.TRIGGERED, function():void {
-				board.advanceState( [diceA.roll(), diceB.roll()]);
-				diceA.visible = true;
-				diceB.visible = true;
+			// this is for rolling the dice/advancing game
+			actionButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("whiteTurn"));
+			actionButton.pivotX = actionButton.width / 2;
+			actionButton.pivotY = actionButton.height / 2 - actionButton.height;
+			actionButton.x = fGame.width / 2;
+			actionButton.y = fGame.height / 2;
+			actionButton.addEventListener(Event.TRIGGERED, function():void {
+				// select how to deal with the button depending on state
+				switch(state) {
+					case ROLL_STATE:
+						board.advanceState( [diceA.roll(), diceB.roll()]);
+						if (!diceA.visible || !diceB.visible) {
+							diceA.visible = true;
+							diceB.visible = true;
+						}
+						actionButton.text = fLocalize.get("skipTurn");
+						state = SKIP_STATE;
+						break;
+
+					case SKIP_STATE:
+						actionButton.text = fLocalize.get("endTurn");
+						state = ROLL_STATE;
+						break;
+
+					case PLAY_STATE:
+						actionButton.text = fLocalize.get("rollDice");
+						state = ROLL_STATE;
+						break;
+				}
+				
 			});
-			addChild(rollDiceButton);
+			addChild(actionButton);
+			
+			// button for collecting pieces
+			collectButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("collectButton"));
+			collectButton.pivotX = collectButton.width / 2;
+			collectButton.pivotY = collectButton.height / 2 - collectButton.height;
+			collectButton.x = fGame.width / 2;
+			collectButton.y = fGame.height / 2;
+			collectButton.visible = false;
+			collectButton.addEventListener(Event.TRIGGERED, function():void {
+				board.collect();
+			});
+			addChild(collectButton);
+		}
+		
+		private function onTurnEnded(e:GameEvent):void {
+			if (state == SKIP_STATE) {
+				actionButton.text = fLocalize.get(board.nextPlayer + "Turn");
+				state = PLAY_STATE;
+			}
 		}
 		
 		public override function destroy():void {

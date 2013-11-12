@@ -31,9 +31,9 @@ package com.mikesoylu.tavla {
 			
 			// update gfx
 			setDotsToNumber(rand);
-			
-			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT,
-					x:(Math.random() + 0.25) * fGame.width * 0.5, y:(Math.random() + 0.25) * fGame.height * 0.5 } );
+			var dx:Number = (Math.random() + 0.25) * fGame.width * 0.5;
+			var dy:Number = (Math.random() + 0.25) * fGame.height * 0.5;
+			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, x:dx, y:dy } );
 			return rand;
 		}
 		

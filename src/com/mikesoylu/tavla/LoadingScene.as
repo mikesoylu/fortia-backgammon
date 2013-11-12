@@ -13,11 +13,16 @@ package com.mikesoylu.tavla {
 		public override function init(e:Event):void {
 			super.init(e);
 			
-			// add localization dictionaries
+			// add localization dictionaries (ideally should be a json file)
 			fLocalize.addDictionary({
 				playButton: "Play",
 				loading: "Loading...",
-				rollButton: "Roll Dice"
+				rollDice: "Roll Dice",
+				collectButton: "Collect Piece",
+				endTurn: "End Turn",
+				whiteTurn: "White's Turn",
+				blackTurn: "Black's Turn",
+				skipTurn: "Skip Turn"
 			});
 			
 			// show a loading text
