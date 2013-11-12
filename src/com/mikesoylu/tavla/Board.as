@@ -86,10 +86,8 @@ package com.mikesoylu.tavla {
 			// create the initial pieces
 			if (shortGame) {
 				lines[8].createPieces(2, this, Piece.WHITE);
-				//lines[10].createPieces(2, this, Piece.BLACK);
 				
 				lines[15].createPieces(2, this, Piece.BLACK);
-				//lines[13].createPieces(2, this, Piece.WHITE);
 				
 				NUM_PLAYER_PIECES = 2;
 			} else {
@@ -148,6 +146,36 @@ package com.mikesoylu.tavla {
 		/** this is called by game scene to collect the current selected piece */
 		public function collect():void {
 			if (null != selectedLine && null != selectedLine.peek()) {
+				// sort moves so we don't use an unnecessary one
+				availableMoves.sort();
+				
+				// find out how much we need to go to collect
+				var minMove:int;
+				if (_currentPlayer == Piece.BLACK)
+					minMove = 23 - selectedLine.index
+				else
+					minMove = selectedLine.index;
+				
+				var moveInd:int = -1;
+				// try to find a fitting move
+				for (var i:int = 0; i < availableMoves.length; i++) {
+					if (availableMoves[i] > minMove) {
+						moveInd = i;
+						break;
+					}
+				}
+				
+				if (moveInd == -1) {
+					return;
+				} else {
+					// we have a move so splice it out
+					availableMoves.splice(moveInd, 1);
+					if (availableMoves.length == 0) {
+						// inform game scene that we're out of moves
+						dispatchEvent(new GameEvent(GameEvent.TURN_ENDED));
+					}
+				}
+				
 				collectedLines[currentPlayer].push(selectedLine.pop());
 				selectedLine = null;
 				selectionMarker.visible = false;
