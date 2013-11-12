@@ -1,5 +1,7 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
 	import starling.core.Starling;
 	import starling.display.Button;
 	import starling.events.*;
@@ -120,6 +122,7 @@ package com.mikesoylu.tavla {
 			board.endTurnAnim();
 			actionButton.text = fLocalize.get(board.currentPlayer + "Won");
 			state = WINNER_STATE;
+			attractAttentionToButton();
 		}
 		
 		private function onTurnEnded(e:GameEvent):void {
@@ -127,7 +130,21 @@ package com.mikesoylu.tavla {
 				board.endTurnAnim();
 				actionButton.text = fLocalize.get(board.nextPlayer + "Turn");
 				state = PLAY_STATE;
+				attractAttentionToButton();
 			}
+		}
+		
+		/** this is used to attract players' attention i.e when doing something wrong */
+		private function attractAttentionToButton():void {
+			var shrinkTween:Tween = new Tween(actionButton, 0.5, Transitions.EASE_OUT)
+			shrinkTween.scaleTo(1);
+			
+			var swellTween:Tween = new Tween(actionButton, 0.5, Transitions.EASE_IN)
+			swellTween.scaleTo(1.5);
+			
+			swellTween.nextTween = shrinkTween;
+			
+			Starling.juggler.add(swellTween);
 		}
 		
 		public override function destroy():void {

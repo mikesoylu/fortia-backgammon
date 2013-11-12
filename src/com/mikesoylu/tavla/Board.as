@@ -1,6 +1,7 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
 	import flash.geom.Point;
+	import starling.animation.DelayedCall;
 	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
@@ -190,6 +191,19 @@ package com.mikesoylu.tavla {
 			}
 		}
 		
+		private function flickerIndicator():void {
+			var callCount:int = 5;
+			var timerCallback:Function = function():void {
+				if (callCount-- > 0) {
+					selectionMarker.visible = !selectionMarker.visible;
+					Starling.juggler.delayCall(timerCallback, 0.05);
+				} else {
+					selectionMarker.visible = true;
+				}
+			}
+			timerCallback();
+		}
+		
 		private function onTouch(e:TouchEvent):void {
 			var touch:Touch = e.getTouch(this as DisplayObject);
 			if (null != touch) {
@@ -212,25 +226,34 @@ package com.mikesoylu.tavla {
 						selectionMarker.visible = true;
 					} else {
 						// check if we can move there
-						if (null != piece && piece.type != _currentPlayer)
-							return;
-						var diff:int = line.index - selectedLine.index;
-						// check if we're going backwards
-						if (Piece.BLACK == _currentPlayer) {
-							if (diff < 0)
-								return;
-						} else if (diff > 0) {
+						if (null != piece && piece.type != _currentPlayer) {
+							flickerIndicator();
 							return;
 						}
+						
+						// check if we're going backwards
+						var diff:int = line.index - selectedLine.index;
+						if (Piece.BLACK == _currentPlayer) {
+							if (diff < 0) {
+								flickerIndicator();
+								return;
+							}
+						} else if (diff > 0) {
+							flickerIndicator();
+							return;
+						}
+						
 						// just de-select if we chose the same line
 						if (diff == 0) {
 							selectedLine = null;
 							selectionMarker.visible = false;
 							return;
 						}
+						
 						// check if we have an available move
 						var moveInd:int = availableMoves.indexOf(Math.abs(diff));
 						if (moveInd == -1) {
+							flickerIndicator();
 							return;
 						} else {
 							// we have a move so splice it out
