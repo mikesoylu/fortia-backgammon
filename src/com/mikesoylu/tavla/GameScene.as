@@ -33,11 +33,13 @@ package com.mikesoylu.tavla {
 			board.addEventListener(GameEvent.TURN_ENDED, onTurnEnded);
 			addChild(board);
 			
-			diceA = new Dice();
+			// get width beforehand because we cant query diceA before init'ing it
+			var dwidth:Number = fAssetManager.getTexture("dice.png").width / 2;
+			diceA = new Dice(fGame.width * 0.75 - dwidth, fGame.height / 2);
 			diceA.visible = false;
 			addChild(diceA);
 			
-			diceB = new Dice();
+			diceB = new Dice(fGame.width * 0.75 + dwidth, fGame.height / 2);
 			diceB.visible = false;
 			addChild(diceB);
 			
@@ -61,7 +63,8 @@ package com.mikesoylu.tavla {
 						break;
 
 					case SKIP_STATE:
-						actionButton.text = fLocalize.get("endTurn");
+						board.endTurn();
+						actionButton.text = fLocalize.get(board.nextPlayer + "Turn");
 						state = ROLL_STATE;
 						break;
 
@@ -89,6 +92,7 @@ package com.mikesoylu.tavla {
 		
 		private function onTurnEnded(e:GameEvent):void {
 			if (state == SKIP_STATE) {
+				board.endTurn();
 				actionButton.text = fLocalize.get(board.nextPlayer + "Turn");
 				state = PLAY_STATE;
 			}

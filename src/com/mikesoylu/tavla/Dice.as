@@ -8,8 +8,12 @@ package com.mikesoylu.tavla {
 	 */
 	public class Dice extends fSprite {
 		private var dots:Vector.<fImage>;
-		public function Dice() {
+		private var restX:Number = 0;
+		private var restY:Number = 0;
+		public function Dice(restX:Number, restY:Number) {
 			super();
+			this.restX = restX;
+			this.restY = restY;
 			var bg:fImage = new fImage(fAssetManager.getTexture("dice.png"));
 			addChild (bg);
 			
@@ -31,9 +35,17 @@ package com.mikesoylu.tavla {
 			
 			// update gfx
 			setDotsToNumber(rand);
+			
+			x = -width;
+			y = fGame.height / 2;
+			
+			// do dice roll animation
 			var dx:Number = (Math.random() + 0.25) * fGame.width * 0.5;
 			var dy:Number = (Math.random() + 0.25) * fGame.height * 0.5;
-			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, x:dx, y:dy } );
+			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, scale:1, x:dx, y:dy } );
+			
+			// place dice to its resting place after some time
+			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, scale:0.5, x:restX, y:restY, delay:2 } );
 			return rand;
 		}
 		

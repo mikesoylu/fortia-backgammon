@@ -1,6 +1,7 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
 	import flash.geom.Point;
+	import starling.core.Starling;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Quad;
@@ -48,7 +49,7 @@ package com.mikesoylu.tavla {
 			addChild(playerIndicator);
 			
 			// marker
-			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x331111);
+			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x222222);
 			selectionMarker.pivotX = selectionMarker.width / 2;
 			selectionMarker.visible = false;
 			addChild(selectionMarker);
@@ -110,15 +111,19 @@ package com.mikesoylu.tavla {
 				playerIndicator.visible = true;
 			}
 			if (Piece.BLACK == _currentPlayer) {
-				playerIndicator.y = 0;
-				playerIndicator.scaleY = -1;
-			} else {
 				playerIndicator.y = fGame.height;
-				playerIndicator.scaleY = 1;
+				Starling.juggler.tween(playerIndicator, 0.5, { scaleY:1 } );
+			} else {
+				playerIndicator.y = 0;
+				Starling.juggler.tween(playerIndicator, 0.5, { scaleY: -1 } );
 			}
 			// advance turn
 			_currentPlayer = nextPlayer;
 			fGame.log(_currentPlayer + "player's turn");
+		}
+		
+		public function endTurn():void {
+			Starling.juggler.tween(playerIndicator, 0.5, { scaleY:0 } );
 		}
 		
 		// this is called by game scene to collect the current selected piece

@@ -20,7 +20,7 @@ package com.mikesoylu.tavla {
 		
 		private static const PIECE_PLACEMENT_FACTOR:Number = 0.5;
 		
-		/** this takes an object for the pos param because Object literals look good in code */
+		/** this takes an object {x,y} for the pos param because Object literals look good in code */
 		public function Line(pos:Object, index:int, expandUpwards:Boolean) {
 			// fill in the instance properties
 			this.index = index;
