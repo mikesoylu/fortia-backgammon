@@ -3,6 +3,7 @@ package com.mikesoylu.tavla {
 	import starling.textures.Texture;
 	
 	/**
+	 * A single checker piece
 	 * @author bms
 	 */
 	public class Piece extends fImage {

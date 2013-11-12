@@ -7,10 +7,14 @@ package com.mikesoylu.tavla {
 	import starling.events.*;
 	
 	/**
+	 * The main game scene
 	 * @author bms
 	 */
 	public class GameScene extends fScene {
-		/** States in a player's turn. (We use static consts because AS3 doesn't have enums) */
+		/** States in a player's turn.
+		 *  We also could have used a seperate class for the state system but it isn't too
+		 *  complicated so this will suffice
+		 */
 		private static const PLAY_STATE:String = "playState";
 		private static const SKIP_STATE:String = "skipState";
 		private static const ROLL_STATE:String = "rollState";
@@ -48,22 +52,17 @@ package com.mikesoylu.tavla {
 			board.addEventListener(GameEvent.CAN_COLLECT, onPlayerCanCollect);
 			addChild(board);
 			
-			// get width beforehand because we cant query diceA before init'ing it
-			var dwidth:Number = fAssetManager.getTexture("dice.png").width / 2;
-			diceA = new Dice(fGame.width * 0.75 - dwidth, fGame.height / 2);
-			diceA.visible = false;
-			addChild(diceA);
-			
-			diceB = new Dice(fGame.width * 0.75 + dwidth, fGame.height / 2);
-			diceB.visible = false;
-			addChild(diceB);
-			
 			// this is for rolling the dice/advancing game
 			actionButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("whiteTurn"));
 			actionButton.pivotX = actionButton.width / 2;
 			actionButton.pivotY = actionButton.height / 2;
 			actionButton.x = fGame.width / 2;
 			actionButton.y = fGame.height / 2;
+			actionButton.scaleX = 0;
+			actionButton.scaleY = 0;
+			Starling.juggler.tween(actionButton, 1, { scaleX:1, scaleY:1, delay:0.75, transition:Transitions.EASE_OUT_ELASTIC } );
+			
+			// listen to touches
 			actionButton.addEventListener(Event.TRIGGERED, function():void {
 				// select how to deal with the button depending on state
 				switch(state) {
@@ -107,6 +106,16 @@ package com.mikesoylu.tavla {
 				board.collect();
 			});
 			addChild(collectButton);
+			
+			// get width beforehand because we cant query diceA before init'ing it
+			var dwidth:Number = fAssetManager.getTexture("dice.png").width / 2;
+			diceA = new Dice(fGame.width * 0.75 - dwidth, fGame.height / 2);
+			diceA.visible = false;
+			addChild(diceA);
+			
+			diceB = new Dice(fGame.width * 0.75 + dwidth, fGame.height / 2);
+			diceB.visible = false;
+			addChild(diceB);
 		}
 		
 		private function onPlayerCanCollect(e:GameEvent):void {
@@ -149,7 +158,8 @@ package com.mikesoylu.tavla {
 		
 		public override function destroy():void {
 			super.destroy();
-			// clear variables
+			
+			// stay safe
 			removeChild(board);
 			board = null;
 		}

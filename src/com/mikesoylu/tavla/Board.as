@@ -9,6 +9,7 @@ package com.mikesoylu.tavla {
 	import starling.events.*;
 	
 	/**
+	 * The checker board
 	 * @author bms
 	 */
 	public class Board extends fLayer {
@@ -21,12 +22,14 @@ package com.mikesoylu.tavla {
 		/** this is where the collected pieces stay */
 		private var collectedLines:Object;
 		
-		/** player turn getter/setters */
+		/** this is where the broken pieces stay */
+		private var brokenLines:Object;
+		
+		/** player turn getters */
 		private var _currentPlayer:String = Piece.BLACK;
 		public function get currentPlayer():String {
 			return _currentPlayer;
 		}
-		
 		public function get nextPlayer():String {
 			return (_currentPlayer == Piece.BLACK)? Piece.WHITE : Piece.BLACK;
 		}
@@ -51,7 +54,14 @@ package com.mikesoylu.tavla {
 			playerIndicator.width = fGame.width;
 			playerIndicator.pivotY = playerIndicator.height;
 			playerIndicator.visible = false;
+			playerIndicator.scaleY = 0;
 			addChild(playerIndicator);
+			
+			// add seperator
+			var seperator:Quad = new Quad(fAssetManager.getTexture("white.png").width, fGame.height, 0x202020);
+			seperator.x = fGame.width / 2 - seperator.width / 2;
+			seperator.touchable = false;
+			addChild(seperator);
 			
 			// marker
 			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x222222);
@@ -62,14 +72,22 @@ package com.mikesoylu.tavla {
 			// init the lines
 			collectedLines = new Object();
 			collectedLines[Piece.WHITE] = new Line( { x:fGame.width / 2,
-				y:fGame.height+fAssetManager.getTexture("white.png").height }, -1, false);
+				y:fGame.height + fAssetManager.getTexture("white.png").height }, -1, false);
 			collectedLines[Piece.BLACK] = new Line( { x:fGame.width / 2,
 				y: -fAssetManager.getTexture("white.png").height }, -1, true);
+			
+			brokenLines = new Object();
+			brokenLines[Piece.WHITE] = new Line( { x:fGame.width / 2,
+				y:fGame.height - fAssetManager.getTexture("white.png").height }, 24, true, true);
+			brokenLines[Piece.BLACK] = new Line( { x:fGame.width / 2,
+				y: fAssetManager.getTexture("white.png").height }, -1, false, true);
 			
 			lines = new Vector.<Line>();
 			for (var i:int = 0; i < 24; i++) {
 				var x:Number;
 				var y:Number;
+				
+				// find where to put the pieces
 				if (i < 12) {
 					x = Number(13 - (i + 1)) * fGame.width / 13.0;
 					y = fGame.height - fAssetManager.getTexture("white.png").height / 2;
@@ -77,10 +95,29 @@ package com.mikesoylu.tavla {
 					x = Number(i%12 + 1) * fGame.width / 13.0;
 					y = fAssetManager.getTexture("white.png").height / 2;
 				}
+				
+				// add an offset at the middle
+				if (i < 12) {
+					if (i % 12 < 6)
+						x += fAssetManager.getTexture("white.png").height / 2;
+					else
+						x -= fAssetManager.getTexture("white.png").height / 2;
+				} else {
+					if (i % 12 >= 6)
+						x += fAssetManager.getTexture("white.png").height / 2;
+					else
+						x -= fAssetManager.getTexture("white.png").height / 2;
+				}
+
 				lines[i] = new Line({ x:x, y:y }, i, i < 12);
 				var marker:fImage = new fImage(fAssetManager.getTexture("marker.png"), x, y);
 				marker.pivotY = fAssetManager.getTexture("white.png").height;
 				marker.rotation = Number(i >= 12) * Math.PI;
+				if (i < 12) {
+					Starling.juggler.add(fUtil.enterBelow(marker));
+				} else {
+					Starling.juggler.add(fUtil.enterAbove(marker));
+				}
 				addChild(marker);
 			}
 			
@@ -104,6 +141,8 @@ package com.mikesoylu.tavla {
 				
 				NUM_PLAYER_PIECES = 15;
 			}
+			brokenLines[Piece.BLACK].createPieces(5, this, Piece.BLACK);
+			brokenLines[Piece.WHITE].createPieces(5, this, Piece.WHITE);
 			
 			// make this touchable so touch events can come from the background quad
 			touchable = true;
@@ -146,7 +185,8 @@ package com.mikesoylu.tavla {
 		
 		/** this is called by game scene to collect the current selected piece */
 		public function collect():void {
-			if (null != selectedLine && null != selectedLine.peek()) {
+			if (null != selectedLine && null != selectedLine.peek() &&
+				null == brokenLines[_currentPlayer].peek()) {
 				// sort moves so we don't use an unnecessary one
 				availableMoves.sort();
 				
@@ -191,6 +231,7 @@ package com.mikesoylu.tavla {
 			}
 		}
 		
+		/** make the selection indicator flicker */
 		private function flickerIndicator():void {
 			var callCount:int = 5;
 			var timerCallback:Function = function():void {
@@ -214,9 +255,12 @@ package com.mikesoylu.tavla {
 					
 					// check if we're selecting or placing the piece
 					if (null == selectedLine) {
-						if (null == piece || piece.type != _currentPlayer || availableMoves.length == 0) {
+						if (null == piece || piece.type != _currentPlayer || availableMoves.length == 0)
 							return;
-						}
+						// are we trying to select while we have broken pieces
+						if (null != brokenLines[_currentPlayer].peek() && line != brokenLines[_currentPlayer])
+							return;
+						
 						// check if we can collect
 						if (canPlayerCollect())
 							dispatchEvent(new GameEvent(GameEvent.CAN_COLLECT));
@@ -226,22 +270,25 @@ package com.mikesoylu.tavla {
 						selectionMarker.visible = true;
 					} else {
 						// check if we can move there
-						if (null != piece && piece.type != _currentPlayer) {
+						if (null != piece && piece.type != _currentPlayer && !line.hasSinglePiece()) {
 							flickerIndicator();
 							return;
 						}
 						
-						// check if we're going backwards
 						var diff:int = line.index - selectedLine.index;
-						if (Piece.BLACK == _currentPlayer) {
-							if (diff < 0) {
+						// check if we're going backwards but only if we're not re-entering
+						if (null == brokenLines[_currentPlayer].peek()) {
+							if (Piece.BLACK == _currentPlayer) {
+								if (diff < 0) {
+									flickerIndicator();
+									return;
+								}
+							} else if (diff > 0) {
 								flickerIndicator();
 								return;
 							}
-						} else if (diff > 0) {
-							flickerIndicator();
-							return;
 						}
+						fGame.log(diff.toString());
 						
 						// just de-select if we chose the same line
 						if (diff == 0) {
@@ -249,7 +296,7 @@ package com.mikesoylu.tavla {
 							selectionMarker.visible = false;
 							return;
 						}
-						
+						fGame.log(diff.toString());
 						// check if we have an available move
 						var moveInd:int = availableMoves.indexOf(Math.abs(diff));
 						if (moveInd == -1) {
@@ -262,6 +309,11 @@ package com.mikesoylu.tavla {
 								// inform game scene that we're out of moves
 								dispatchEvent(new GameEvent(GameEvent.TURN_ENDED));
 							}
+						}
+						
+						// check if we're breaking a piece
+						if (line.hasSinglePiece() && null != piece && _currentPlayer != piece.type) {
+							brokenLines[nextPlayer].push(line.pop());
 						}
 						
 						line.push(selectedLine.pop());
@@ -294,17 +346,26 @@ package com.mikesoylu.tavla {
 		/** used to get the right piece under the touch */
 		private function getLineAt(x:Number, y:Number):Line {
 			var ind:int;
-			// correct the position
-			x -= fAssetManager.getTexture("white.png").width / 2;
 			
 			// figure out which line we're on
 			if (y < fGame.height / 2) {
 				ind = 12 + Math.floor(x / (fGame.width / 13.0));
+				// are we selecting the middle?
+				if (ind == 18)
+					return brokenLines[_currentPlayer];
+				// fix a bit because of the offset in the middle
+				if (ind > 18) ind--;
 				ind = fUtil.clamp(12, 23, ind);
 			} else {
 				ind = 11 - Math.floor(x / (fGame.width / 13.0));
+				// are we selecting the middle?
+				if (ind == 5)
+					return brokenLines[_currentPlayer];
+				// fix a bit because of the offset in the middle
+				if (ind < 6) ind++;
 				ind = fUtil.clamp(0, 11, ind);
 			}
+			
 			// get line
 			return lines[ind];
 		}

@@ -5,7 +5,7 @@ package com.mikesoylu.tavla {
 	import starling.text.TextField;
 	
 	/**
-	 * We'll do all the loading and setup here
+	 * A simple loading scene we'll do all the loading and setup here
 	 * @author bms
 	 */
 	public class LoadingScene extends fScene {

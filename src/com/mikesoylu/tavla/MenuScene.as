@@ -1,9 +1,11 @@
 package com.mikesoylu.tavla {
 	import com.mikesoylu.fortia.*;
+	import starling.core.Starling;
 	import starling.display.Button;
 	import starling.events.*;
 	
 	/**
+	 * A simple menu scene
 	 * @author bms
 	 */
 	public class MenuScene extends fScene {
@@ -32,6 +34,18 @@ package com.mikesoylu.tavla {
 				fGame.scene = new GameScene(true);
 			});
 			addChild(playShortButton);
+			
+			Starling.juggler.add(fUtil.enterAbove(playButton));
+			Starling.juggler.add(fUtil.enterBelow(playShortButton));
+		}
+		public override function destroy():void {
+			super.destroy();
+			
+			// stay safe
+			removeChild(playButton);
+			removeChild(playShortButton);
+			playButton = null;
+			playShortButton = null;
 		}
 	}
 }
