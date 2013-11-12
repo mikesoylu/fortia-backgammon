@@ -15,14 +15,17 @@ package com.mikesoylu.tavla {
 			
 			// add localization dictionaries (ideally should be a json file)
 			fLocalize.addDictionary({
-				playButton: "Play",
+				playButton: "Play Game",
+				playShortButton: "Play Short Game",
 				loading: "Loading...",
 				rollDice: "Roll Dice",
 				collectButton: "Collect Piece",
 				endTurn: "End Turn",
-				whiteTurn: "White's Turn",
-				blackTurn: "Black's Turn",
-				skipTurn: "Skip Turn"
+				whiteTurn: "Start White's Turn",
+				blackTurn: "Start Black's Turn",
+				skipTurn: "Skip Turn",
+				whiteWon: "White Won!",
+				blackWon: "Black Won!"
 			});
 			
 			// show a loading text

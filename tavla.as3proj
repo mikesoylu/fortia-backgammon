@@ -6,8 +6,8 @@
     <movie input="" />
     <movie path="bin\tavla.swf" />
     <movie fps="30" />
-    <movie width="2048" />
-    <movie height="2048" />
+    <movie width="4096" />
+    <movie height="4096" />
     <movie version="3" />
     <movie minorVersion="7" />
     <movie platform="AIR Mobile" />

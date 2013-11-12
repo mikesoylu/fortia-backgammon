@@ -11,30 +11,34 @@ package com.mikesoylu.tavla {
 	 * @author bms
 	 */
 	public class Board extends fLayer {
+		/** number of pieces each player gets initially (readonly - set by constructor) */
+		private var NUM_PLAYER_PIECES:int;
+		
 		/** lines that contain pieces, clockwise order starting from bottom right */
 		private var lines:Vector.<Line>;
 		
 		/** this is where the collected pieces stay */
 		private var collectedLines:Object;
 		
-		/** player turn */
+		/** player turn getter/setters */
 		private var _currentPlayer:String = Piece.BLACK;
 		public function get currentPlayer():String {
 			return _currentPlayer;
 		}
+		
 		public function get nextPlayer():String {
 			return (_currentPlayer == Piece.BLACK)? Piece.WHITE : Piece.BLACK;
 		}
 		
-		/** selection related properties */
+		/** selection related fields */
 		private var selectionMarker:Quad;
 		private var selectedLine:Line = null;
 		private var playerIndicator:fImage;
 		
-		/** this holds the possible moves we can make in a turn */
+		/** this holds the possible moves each player can make in a turn */
 		private var availableMoves:Array = [];
 		
-		public function Board() {
+		public function Board(shortGame:Boolean = false) {
 			super();
 			
 			// the background (this is the only touchable thing)
@@ -56,8 +60,10 @@ package com.mikesoylu.tavla {
 			
 			// init the lines
 			collectedLines = new Object();
-			collectedLines[Piece.BLACK] = new Line( { x:-1000, y:0 }, -1, true);
-			collectedLines[Piece.WHITE] = new Line( { x:-1000, y:0 }, -1, false);
+			collectedLines[Piece.WHITE] = new Line( { x:fGame.width / 2,
+				y:fGame.height+fAssetManager.getTexture("white.png").height }, -1, false);
+			collectedLines[Piece.BLACK] = new Line( { x:fGame.width / 2,
+				y: -fAssetManager.getTexture("white.png").height }, -1, true);
 			
 			lines = new Vector.<Line>();
 			for (var i:int = 0; i < 24; i++) {
@@ -78,15 +84,27 @@ package com.mikesoylu.tavla {
 			}
 			
 			// create the initial pieces
-			lines[0].createPieces(2, this, Piece.BLACK);
-			lines[5].createPieces(5, this, Piece.WHITE);
-			lines[7].createPieces(3, this, Piece.WHITE);
-			lines[11].createPieces(5, this, Piece.BLACK);
-			
-			lines[23].createPieces(2, this, Piece.WHITE);
-			lines[18].createPieces(5, this, Piece.BLACK);
-			lines[16].createPieces(3, this, Piece.BLACK);
-			lines[12].createPieces(5, this, Piece.WHITE);
+			if (shortGame) {
+				lines[8].createPieces(2, this, Piece.WHITE);
+				//lines[10].createPieces(2, this, Piece.BLACK);
+				
+				lines[15].createPieces(2, this, Piece.BLACK);
+				//lines[13].createPieces(2, this, Piece.WHITE);
+				
+				NUM_PLAYER_PIECES = 2;
+			} else {
+				lines[0].createPieces(2, this, Piece.BLACK);
+				lines[5].createPieces(5, this, Piece.WHITE);
+				lines[7].createPieces(3, this, Piece.WHITE);
+				lines[11].createPieces(5, this, Piece.BLACK);
+				
+				lines[23].createPieces(2, this, Piece.WHITE);
+				lines[18].createPieces(5, this, Piece.BLACK);
+				lines[16].createPieces(3, this, Piece.BLACK);
+				lines[12].createPieces(5, this, Piece.WHITE);
+				
+				NUM_PLAYER_PIECES = 15;
+			}
 			
 			// make this touchable so touch events can come from the background quad
 			touchable = true;
@@ -122,13 +140,26 @@ package com.mikesoylu.tavla {
 			fGame.log(_currentPlayer + "player's turn");
 		}
 		
-		public function endTurn():void {
+		/** called by game scene for easthetics */
+		public function endTurnAnim():void {
 			Starling.juggler.tween(playerIndicator, 0.5, { scaleY:0 } );
 		}
 		
-		// this is called by game scene to collect the current selected piece
+		/** this is called by game scene to collect the current selected piece */
 		public function collect():void {
-			
+			if (null != selectedLine && null != selectedLine.peek()) {
+				collectedLines[currentPlayer].push(selectedLine.pop());
+				selectedLine = null;
+				selectionMarker.visible = false;
+				checkPlayerHasWon();
+			}
+		}
+		
+		/** this checks if the current player has won */
+		private function checkPlayerHasWon():void {
+			if (collectedLines[_currentPlayer].length == NUM_PLAYER_PIECES) {
+				dispatchEvent(new GameEvent(GameEvent.PLAYER_WON));
+			}
 		}
 		
 		private function onTouch(e:TouchEvent):void {
@@ -144,6 +175,10 @@ package com.mikesoylu.tavla {
 						if (null == piece || piece.type != _currentPlayer || availableMoves.length == 0) {
 							return;
 						}
+						// check if we can collect
+						if (canPlayerCollect())
+							dispatchEvent(new GameEvent(GameEvent.CAN_COLLECT));
+						
 						selectedLine = line;
 						selectionMarker.x = line.rootPosition.x;
 						selectionMarker.visible = true;
@@ -186,7 +221,9 @@ package com.mikesoylu.tavla {
 			}
 		}
 		
-		private function isPlayerCollecting(player:String):Boolean {
+		/** check if the current player can collect pieces */
+		private function canPlayerCollect():Boolean {
+			var player:String = _currentPlayer;
 			// check if the player has pieces outside (can be optimized but not called that often)
 			for (var i:int = 0; i < 24; i++) {
 				var piece:Piece = lines[i].peek();

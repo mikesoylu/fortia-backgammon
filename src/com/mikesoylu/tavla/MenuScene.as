@@ -8,6 +8,7 @@ package com.mikesoylu.tavla {
 	 */
 	public class MenuScene extends fScene {
 		private var playButton:Button;
+		private var playShortButton:Button;
 		
 		public override function init(e:Event):void {
 			super.init(e);
@@ -15,11 +16,22 @@ package com.mikesoylu.tavla {
 			playButton.pivotX = playButton.width / 2;
 			playButton.pivotY = playButton.height / 2;
 			playButton.x = fGame.width / 2;
-			playButton.y = fGame.height / 2;
+			playButton.y = fGame.height / 2 - playButton.height;
 			playButton.addEventListener(Event.TRIGGERED, function():void {
 				fGame.scene = new GameScene();
 			});
 			addChild(playButton);
+			
+			// add a short game button (for debug)
+			playShortButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("playShortButton"));
+			playShortButton.pivotX = playShortButton.width / 2;
+			playShortButton.pivotY = playShortButton.height / 2;
+			playShortButton.x = fGame.width / 2;
+			playShortButton.y = fGame.height / 2 + playShortButton.height;
+			playShortButton.addEventListener(Event.TRIGGERED, function():void {
+				fGame.scene = new GameScene(true);
+			});
+			addChild(playShortButton);
 		}
 	}
 }

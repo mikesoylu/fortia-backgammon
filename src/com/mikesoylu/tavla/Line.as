@@ -43,6 +43,10 @@ package com.mikesoylu.tavla {
 			return null;
 		}
 		
+		public function get length():uint {
+			return pieces.length;
+		}
+		
 		public function hasSinglePiece():Boolean {
 			return 1 == pieces.length;
 		}
