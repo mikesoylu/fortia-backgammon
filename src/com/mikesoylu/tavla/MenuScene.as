@@ -17,6 +17,8 @@ package com.mikesoylu.tavla {
 			playButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("playButton"));
 			playButton.pivotX = playButton.width / 2;
 			playButton.pivotY = playButton.height / 2;
+			playButton.fontBold = true;
+			playButton.fontSize = 18;
 			playButton.x = fGame.width / 2;
 			playButton.y = fGame.height / 2 - playButton.height;
 			playButton.addEventListener(Event.TRIGGERED, function():void {
@@ -28,6 +30,8 @@ package com.mikesoylu.tavla {
 			playShortButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("playShortButton"));
 			playShortButton.pivotX = playShortButton.width / 2;
 			playShortButton.pivotY = playShortButton.height / 2;
+			playShortButton.fontBold = true;
+			playShortButton.fontSize = 18;
 			playShortButton.x = fGame.width / 2;
 			playShortButton.y = fGame.height / 2 + playShortButton.height;
 			playShortButton.addEventListener(Event.TRIGGERED, function():void {

@@ -4,11 +4,11 @@
 	Created with ShoeBox
 	http://renderhjs.net/shoebox/
 	-->
-	<SubTexture name="black.png"	x="0"	y="208"	width="124"	height="124" frameX="-0" frameY="-0" frameWidth="124" frameHeight="124"/>
-	<SubTexture name="button.png"	x="0"	y="0"	width="240"	height="67" frameX="-0" frameY="-0" frameWidth="240" frameHeight="67"/>
-	<SubTexture name="dice.png"	x="0"	y="69"	width="137"	height="137" frameX="-0" frameY="-0" frameWidth="137" frameHeight="137"/>
-	<SubTexture name="diceMarker.png"	x="0"	y="460"	width="21"	height="21" frameX="-0" frameY="-0" frameWidth="21" frameHeight="21"/>
-	<SubTexture name="marker.png"	x="126"	y="208"	width="124"	height="191" frameX="-0" frameY="-0" frameWidth="124" frameHeight="191"/>
-	<SubTexture name="select.png"	x="139"	y="69"	width="4"	height="128" frameX="-0" frameY="-27" frameWidth="4" frameHeight="155"/>
-	<SubTexture name="white.png"	x="0"	y="334"	width="124"	height="124" frameX="-0" frameY="-0" frameWidth="124" frameHeight="124"/>
+	<SubTexture name="black.png"	x="0"	y="243"	width="124"	height="124" frameX="-0" frameY="-0" frameWidth="124" frameHeight="124"/>
+	<SubTexture name="button.png"	x="0"	y="0"	width="361"	height="102" frameX="-14" frameY="-3" frameWidth="389" frameHeight="109"/>
+	<SubTexture name="dice.png"	x="0"	y="104"	width="137"	height="137" frameX="-0" frameY="-0" frameWidth="137" frameHeight="137"/>
+	<SubTexture name="diceMarker.png"	x="126"	y="436"	width="21"	height="21" frameX="-0" frameY="-0" frameWidth="21" frameHeight="21"/>
+	<SubTexture name="marker.png"	x="126"	y="243"	width="124"	height="191" frameX="-0" frameY="-0" frameWidth="124" frameHeight="191"/>
+	<SubTexture name="select.png"	x="139"	y="104"	width="4"	height="128" frameX="-0" frameY="-27" frameWidth="4" frameHeight="155"/>
+	<SubTexture name="white.png"	x="0"	y="369"	width="124"	height="124" frameX="-0" frameY="-0" frameWidth="124" frameHeight="124"/>
 </TextureAtlas>

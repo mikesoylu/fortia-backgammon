@@ -58,13 +58,13 @@ package com.mikesoylu.tavla {
 			addChild(playerIndicator);
 			
 			// add seperator
-			var seperator:Quad = new Quad(fAssetManager.getTexture("white.png").width, fGame.height, 0x202020);
+			var seperator:Quad = new Quad(fAssetManager.getTexture("white.png").width, fGame.height, 0x181818);
 			seperator.x = fGame.width / 2 - seperator.width / 2;
 			seperator.touchable = false;
 			addChild(seperator);
 			
 			// marker
-			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x222222);
+			selectionMarker = new Quad(fAssetManager.getTexture("white.png").height, fGame.height, 0x2F2F2F);
 			selectionMarker.pivotX = selectionMarker.width / 2;
 			selectionMarker.visible = false;
 			addChild(selectionMarker);
@@ -141,8 +141,6 @@ package com.mikesoylu.tavla {
 				
 				NUM_PLAYER_PIECES = 15;
 			}
-			brokenLines[Piece.BLACK].createPieces(5, this, Piece.BLACK);
-			brokenLines[Piece.WHITE].createPieces(5, this, Piece.WHITE);
 			
 			// make this touchable so touch events can come from the background quad
 			touchable = true;

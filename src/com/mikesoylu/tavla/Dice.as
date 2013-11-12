@@ -45,7 +45,7 @@ package com.mikesoylu.tavla {
 			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, scale:1, x:dx, y:dy } );
 			
 			// place dice to its resting place after some time
-			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, scale:0.5, x:restX, y:restY, delay:2 } );
+			Starling.juggler.tween(this, 0.5, { transition:Transitions.EASE_OUT, scale:0.5, x:restX, y:restY, delay:1 } );
 			return rand;
 		}
 		

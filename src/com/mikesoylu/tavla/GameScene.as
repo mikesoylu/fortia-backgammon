@@ -56,6 +56,8 @@ package com.mikesoylu.tavla {
 			actionButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("whiteTurn"));
 			actionButton.pivotX = actionButton.width / 2;
 			actionButton.pivotY = actionButton.height / 2;
+			actionButton.fontBold = true;
+			actionButton.fontSize = 18;
 			actionButton.x = fGame.width / 2;
 			actionButton.y = fGame.height / 2;
 			actionButton.scaleX = 0;
@@ -99,6 +101,8 @@ package com.mikesoylu.tavla {
 			collectButton = new Button(fAssetManager.getTexture("button.png"), fLocalize.get("collectButton"));
 			collectButton.pivotX = collectButton.width / 2;
 			collectButton.pivotY = collectButton.height / 2;
+			collectButton.fontBold = true;
+			collectButton.fontSize = 18;
 			collectButton.x = fGame.width / 2;
 			collectButton.y = fGame.height / 2 - collectButton.height;
 			collectButton.visible = false;
